@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return send_file("New folder.zip", as_attachment=True)
+    return send_file("TOI.txt", as_attachment=True)
 
 @app.route("/health")
 def download():
@@ -14,3 +14,4 @@ def download():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
