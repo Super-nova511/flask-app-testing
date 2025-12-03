@@ -1,0 +1,189 @@
+SOIL
+
+#define AO_pin 6
+#define DO_pin 7
+#define redLED 4
+#define greenLED 3
+#define buzzer 12
+
+void setup() {
+  pinMode(AO_pin, INPUT);
+  pinMode(DO_pin, INPUT);
+  pinMode(redLED, OUTPUT);
+  pinMode(greenLED, OUTPUT);
+  pinMode(buzzer, OUTPUT);
+
+  Serial.begin(9600);
+}
+
+void loop() {
+  int aoValue = analogRead(AO_pin);   // Read moisture level
+  int doValue = digitalRead(DO_pin);  // Dry/Wet signal
+
+  Serial.print("AO: ");
+  Serial.print(aoValue);
+  Serial.print(" | DO: ");
+  Serial.println(doValue);
+
+  // DO = HIGH → Dry soil
+  if (doValue == HIGH) {
+    digitalWrite(redLED, HIGH);      // Soil dry
+    digitalWrite(greenLED, LOW);
+    digitalWrite(buzzer, HIGH);      // Buzzer ON
+  } 
+  // DO = LOW → Moist soil
+  else {
+    digitalWrite(redLED, LOW);
+    digitalWrite(greenLED, HIGH);    // Moist soil
+    digitalWrite(buzzer, LOW);
+  }
+
+  delay(300);
+}
+
+LONG TO PIN
+SHORT TO SHORT 
+-------------------------------------------------------------------------------------
+ULTRASONIC
+
+#define trigPin 6
+#define echoPin 7
+#define ledRed 4
+#define ledGreen 3
+#define buzzerPin 12
+
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(ledRed, OUTPUT);
+  pinMode(ledGreen, OUTPUT);
+  pinMode(buzzerPin, OUTPUT);
+
+  Serial.begin(9600);
+}
+
+void loop() {
+  long duration, distance;
+
+  // Clear trig pin
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+
+  // Trigger pulse
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  // Read echo
+  duration = pulseIn(echoPin, HIGH);
+
+  // Convert to cm
+  distance = duration * 0.034 / 2;
+
+  Serial.print("Distance: ");
+  Serial.println(distance);
+
+  // ------ Conditions ------
+  if (distance <= 15) {  // object close
+    digitalWrite(ledRed, HIGH);
+    digitalWrite(ledGreen, LOW);
+    digitalWrite(buzzerPin, HIGH);
+  } 
+  else {
+    digitalWrite(ledRed, LOW);
+    digitalWrite(ledGreen, HIGH);
+    digitalWrite(buzzerPin, LOW);
+  }
+
+  delay(200);
+}
+
+----------------------------------------------------------------------------
+LDR
+
+#define ldrPin 7      // DO pin of LDR module
+#define redLED 4
+#define greenLED 3
+#define buzzerPin 12
+
+void setup() {
+  Serial.begin(9600);
+
+  pinMode(ldrPin, INPUT);
+  pinMode(redLED, OUTPUT);
+  pinMode(greenLED, OUTPUT);
+  pinMode(buzzerPin, OUTPUT);
+
+  // Start OFF
+  digitalWrite(redLED, LOW);
+  digitalWrite(greenLED, LOW);
+  digitalWrite(buzzerPin, LOW);
+}
+
+void loop() {
+  int ldrValue = digitalRead(ldrPin);
+
+  if (ldrValue == LOW) {   
+    // LOW = DARK (most modules give LOW in dark)
+    Serial.println("DARK");
+
+    digitalWrite(redLED, HIGH);
+    digitalWrite(greenLED, LOW);
+    digitalWrite(buzzerPin, HIGH);
+
+  } else {                
+    // HIGH = LIGHT
+    Serial.println("LIGHT");
+
+    digitalWrite(redLED, LOW);
+    digitalWrite(greenLED, HIGH);
+    digitalWrite(buzzerPin, LOW);
+  }
+
+  delay(500);
+}
+
+---------------------------------------------------------------------
+SMOKE
+
+// Pin connections
+#define smokeAO 7
+#define smokeDO 6
+#define redLed 4
+#define greenLed 3
+#define buzzer 12
+
+void setup() {
+  pinMode(smokeAO, INPUT);    // Analog output (digital read only here)
+  pinMode(smokeDO, INPUT);    // Digital output
+  pinMode(redLed, OUTPUT);
+  pinMode(greenLed, OUTPUT);
+  pinMode(buzzer, OUTPUT);
+
+  Serial.begin(9600);
+}
+
+void loop() {
+
+  int aoValue = analogRead(smokeAO);  // Read AO (0–1023)
+  int doValue = digitalRead(smokeDO); // Read DO (0 or 1)
+
+  Serial.print("AO Value: ");
+  Serial.print(aoValue);
+  Serial.print(" | DO Value: ");
+  Serial.println(doValue);
+
+  // If DO HIGH → smoke detected
+  if (doValue == HIGH) {
+    digitalWrite(redLed, HIGH);
+    digitalWrite(greenLed, LOW);
+    digitalWrite(buzzer, HIGH);
+  }
+  else {
+    digitalWrite(redLed, LOW);
+    digitalWrite(greenLed, HIGH);
+    digitalWrite(buzzer, LOW);
+  }
+
+  delay(200);
+}
